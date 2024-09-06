@@ -1,0 +1,7 @@
+{
+    "num_cores": 4,
+    "L2C": { 
+        "prefetcher": "berti" 
+    }  
+}
+

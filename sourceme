@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Home for ChampSim - note that this must be set from ChampSim/ folder for other scripts to work 
+export CHAMPSIM_HOME=`pwd`
+# Provide the source path for your traces
+export TRACE_SRC=~/Work/dpc3_traces
+# alias for creating jobs - requires commandline args
+alias create_jobs='python3 $CHAMPSIM_HOME/scripts/create_jobs.py'

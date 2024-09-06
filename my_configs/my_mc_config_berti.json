@@ -1,0 +1,8 @@
+{
+    "num_cores": 4,
+    "branch_predictor": "perceptron",
+    "L1D": { 
+        "prefetcher": "berti" 
+    }  
+}
+
