@@ -21,7 +21,7 @@ def parse_exp(filename):
         if not elem or elem.startswith('#'):
             continue
 
-        tokens = elem.split()
+        tokens = elem.split('=')
         if tokens[1] == "=":
             exp_configs[tokens[0]] = ' '.join(tokens[2:])
         else:
@@ -57,38 +57,12 @@ def parse_trace(filename):
 
     return trace_info
 
-def main():
-    parser = argparse.ArgumentParser(description="Creating Jobs for ChampSim", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-t", "--tlist", required=True, help="Trace List for simulations")
-    parser.add_argument("-c", "--config", required=True, help="Experiment configurations")
-    parser.add_argument("-x", "--exe", required=True, help="ChampSim executable file")
-    parser.add_argument("-l", "--local", type=int, choices=[0, 1], default=1, help="Local(1) or slurm(0) runs")
-
-    args = parser.parse_args()
-
-    if "CHAMPSIM_HOME" not in os.environ or "TRACE_SRC" not in os.environ:
-        print("CHAMPSIM_HOME or TRACE_SRC environment variables not set")
-        sys.exit(1)
-
-    try:
-        trace_info = parse_trace(args.tlist)
-        exp_info = parse_exp(args.config)
-    except Exception as e:
-        print("Error parsing trace or experiment info:", e)
-        traceback.print_exc()
-        sys.exit(1)
-
-    for trace in trace_info:
-        for exp in exp_info:
-            cmdline = generate_command(args.exe, exp["KNOBS"], trace["KNOBS"], trace["TRACE"], trace["NAME"], exp["NAME"], args.local)
-            print(cmdline)
-
-def generate_command(exe, exp_knobs, trace_knobs, trace_input, trace_name, exp_name, local):
+def generate_command(exp_knobs, trace_knobs, trace_input, trace_name, exp_name, local):
     if local == 1:
-        cmdline = f"{exe} {exp_knobs} {trace_knobs} {trace_input} > {trace_name}_{exp_name}.out 2>&1"
+        cmdline = f"{exp_knobs} {trace_knobs} {trace_input} > {trace_name}_{exp_name}.out 2>&1"
     else:
         slurm_cmd = f"sbatch --mincpus 1 -c 1 -J {trace_name}_{exp_name} -o {trace_name}_{exp_name}.out -e {trace_name}_{exp_name}.err wrapper "
-        cmdline = slurm_cmd + f"{exe} {exp_knobs} {trace_knobs} {trace_input}"
+        cmdline = slurm_cmd + f"{exp_knobs} {trace_knobs} {trace_input}"
 
     cmdline = cmdline.replace("$(CHAMPSIM_HOME)", os.environ['CHAMPSIM_HOME'])
     cmdline = cmdline.replace("$(TRACE_SRC)", os.environ['TRACE_SRC'])
@@ -96,6 +70,54 @@ def generate_command(exe, exp_knobs, trace_knobs, trace_input, trace_name, exp_n
     cmdline = cmdline.replace("$(EXP)", exp_name)
 
     return cmdline
+
+def build_champsim():
+    # TODO Add support for passing a list of configs 
+    print("######## Building ChampSim ########")
+    os.system("make")
+
+def main():
+    parser = argparse.ArgumentParser(description="ChampSim job creation tool", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-b", "--build", type=bool, required=False, default=False, help="Build ChampSim")
+    #parser.add_argument("-c","--config",help="Config File for Building ChampSim")
+    parser.add_argument("-t", "--tlist", help="Trace List for simulations")
+    parser.add_argument("-e", "--exp", help="List of ChampSim experiment binaries")
+    parser.add_argument("-l", "--local", type=int, choices=[0, 1], default=1, help="Local(1) or slurm(0) runs")
+    parser.add_argument("-o", "--outdir", help="Output directory name. All experiments folders are placed inside this.")
+
+    args = parser.parse_args()
+
+    if "CHAMPSIM_HOME" not in os.environ or "TRACE_SRC" not in os.environ:
+        print("CHAMPSIM_HOME or TRACE_SRC environment variables not set")
+        sys.exit(1)
+
+    build = args.build
+    if build:
+        build_champsim()
+        sys.exit(0)
+
+    try:
+        trace_info = parse_trace(args.tlist)
+        exp_info = parse_exp(args.exp)
+    except Exception as e:
+        print("Error parsing trace or experiment info:", e)
+        traceback.print_exc()
+        sys.exit(1)
+
+    cwd = os.getcwd()
+    outdir = os.path.join(cwd,args.outdir)
+    if outdir and not os.path.exists(outdir):
+        os.makedirs(outdir)
+
+    for exp in exp_info:
+        #print(exp["NAME"])
+        exp_dir = os.path.join(outdir,exp["NAME"])
+        #print(exp_dir)
+        os.makedirs(exp_dir)
+        for trace in trace_info:
+            cmdline = generate_command(exp["KNOBS"], trace["KNOBS"], trace["TRACE"], trace["NAME"], exp["NAME"], args.local)
+            print(cmdline)
+        print("")
 
 if __name__ == "__main__":
     exit(main())

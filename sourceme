@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Script to setup ChampSim shortcuts and helpful scripts
+
 # Home for ChampSim - note that this must be set from ChampSim/ folder for other scripts to work 
 export CHAMPSIM_HOME=`pwd`
 # Provide the source path for your traces

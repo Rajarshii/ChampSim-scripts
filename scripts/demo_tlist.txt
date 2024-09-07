@@ -1,0 +1,8 @@
+NAME=mix_0
+TRACE=$(TRACE_SRC)/644.nab_s-5853B.champsimtrace.xz $(TRACE_SRC)/603.bwaves_s-3699B.champsimtrace.xz $(TRACE_SRC)/602.gcc_s-734B.champsimtrace.xz $(TRACE_SRC)/628.pop2_s-17B.champsimtrace.xz
+KNOBS=--warmup_instructions=100000000 --simulation_instructions=150000000
+
+NAME=mix_1
+TRACE=$(TRACE_SRC)/644.nab_s-5853B.champsimtrace.xz $(TRACE_SRC)/603.bwaves_s-3699B.champsimtrace.xz $(TRACE_SRC)/602.gcc_s-734B.champsimtrace.xz $(TRACE_SRC)/628.pop2_s-17B.champsimtrace.xz
+KNOBS=--warmup_instructions=100000000 --simulation_instructions=250000000
+

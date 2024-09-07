@@ -1,4 +1,15 @@
-## Example Usage of the run command generator
-python3 ../scripts/create_jobs.py --tlist MULTICORE_4C.tlist --config MULTICORE_4C.exp --exe /home/das/ChampSim/bin/champsim_mc_berti > jobfile_berti.sh
+## Example Usage of the scripts
 
-python3 create_jobs.py --tlist example.tlist --config example.exp --exe /home/das/ChampSim_base/ChampSim/bin/champsim > jobfile.sh
+### create_jobs.py
+---
+#### Create sweep scripts for ChampSim :
+####    1. tlist: workloads (must include the number of warmpup and simulation instructions)
+####    2. exp: experiment champsim binaries
+####    3. outdir: root directory of the experiments. The scripts creates this directory and sub-directories for each experiment 
+
+
+```
+python3 create_jobs_v2.py --tlist demo_tlist.txt --exp demo_exp.txt --outdir dummy
+```
+
+---

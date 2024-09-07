@@ -1,0 +1,9 @@
+#### Example Experiments ####
+# Current Usage: 
+# NAME_OF_EXPERIMENT=/path/to/champsim/binary
+#
+NO_PREF=/home/das/champsim/bin/nopref
+SPP_PREF=/home/das/champsim/bin/spp
+BERTI_PREF=/home/das/champsim/bin/berti
+AMPM_PREF=/home/das/champsim/bin/ampm
+SHIP_REPL=/home/das/champsim/bin/ship
