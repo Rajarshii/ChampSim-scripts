@@ -13,3 +13,12 @@ python3 create_jobs_v2.py --tlist demo_tlist.txt --exp demo_exp.txt --outdir dum
 ```
 
 ---
+
+###  gen_trace_combinations.py
+---
+#### Generate Trace Combinations for ChampSim :
+
+
+```
+python3 gen_trace_combinations.py -t testlist -mc 1 -c 8 -u 0 -M 250 -tl 8cor
+```
